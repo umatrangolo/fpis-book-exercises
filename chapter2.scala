@@ -20,4 +20,7 @@ object chapter2 {
     def scan(i: Int): Boolean = if (i == as.size - 1) true else if (ordered(as(i), as(i + 1))) scan(i + 1) else false
     if (as.isEmpty) true else scan(0)
   }
+
+  // Ex 2.3
+  def curry[A,B,C](f: (A, B) => C): A => (B => C) = (a: A) => (b: B) => f(a, b)
 }
