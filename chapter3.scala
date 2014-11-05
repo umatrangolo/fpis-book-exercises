@@ -28,4 +28,12 @@ object chapther3 {
     case Nil => Nil
     case Cons(x, xs) => xs // O(1)
   }
+
+  // Ex 3.2
+  // Using the same idea, implement the function setHead for replacing
+  // the first element of a List with a different value.
+  def setHead[A](ls: List[A], head: A): List[A] = ls match { // O(1) in both cases
+    case Nil => List(head)
+    case Cons(x, xs) => Cons(head, tail(ls))
+  }
 }
