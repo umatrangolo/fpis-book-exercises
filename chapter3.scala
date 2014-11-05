@@ -18,3 +18,14 @@ object List {
 
 // Ex 3.1
 // The result is 3 cause the matched case is the third one
+
+// Ex 3.2
+// Implement the function tail for removing the first element of a
+// List. Note that the function takes constant time. What are different
+// choices you could make in your implementation if the List is Nil?
+object chapther3 {
+  def tail[A](ls: List[A]): List[A] = ls match {
+    case Nil => Nil
+    case Cons(x, xs) => xs // O(1)
+  }
+}
