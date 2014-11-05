@@ -47,4 +47,13 @@ object chapther3 {
     case Cons(x, xs) => if (n > 0) drop(tail(l), n - 1) else l
   }
 
+  // Ex 3.5
+  // Implement dropWhile, which removes elements from the List prefix as
+  // long as they match a predicate.
+  def dropWhile[A](l: List[A], f: A => Boolean, intermediate: List[A] = Nil): List[A] = l match { // O(n)
+    case Nil => intermediate
+    case Cons(x, xs) => if (f(x)) dropWhile(xs, f, Cons(x, intermediate)) else dropWhile(xs, f, intermediate)
+  }
+
+
 }
