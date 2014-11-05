@@ -36,4 +36,15 @@ object chapther3 {
     case Nil => List(head)
     case Cons(x, xs) => Cons(head, tail(ls))
   }
+
+  // Ex 3.4
+  // Generalize tail to the function drop, which removes the first n
+  // elements from a list. Note that this function takes time proportional
+  // only to the number of elements being dropped—we don’t need to make a
+  // copy of the entire List
+  def drop[A](l: List[A], n: Int): List[A] = l match { // O(n)
+    case Nil => Nil
+    case Cons(x, xs) => if (n > 0) drop(tail(l), n - 1) else l
+  }
+
 }
