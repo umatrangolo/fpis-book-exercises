@@ -22,26 +22,12 @@ object List {
     case Cons(x, xs) => f(x, foldRight(xs, z)(f))
   }
 
-  // Ex 3.10
-  @tailrec
-  def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B = as match {
-    case Nil => z
-    case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
-  }
-
   def sum2(ints: List[Int]) = foldRight(ints, 0)(_ + _)
 
   def product2(ints: List[Int]) = foldRight(ints, 1.0)(_ * _)
 
-  // Ex 3.11
-  def sum3(ints: List[Int]) = foldLeft(ints, 0)(_ + _)
-  def product3(ints: List[Int]) = foldLeft(ints, 1.0)(_ * _)
-}
-
-// Ex 3.1
-// The result is 3 cause the matched case is the third one
-
-object chapther3 {
+  // Ex 3.1
+  // The result is 3 cause the matched case is the third one
 
   // Ex 3.2
   // Implement the function tail for removing the first element of a
@@ -93,4 +79,14 @@ object chapther3 {
   // Compute the length of a list using foldRight.
   def length[A](as: List[A]): Int = foldRight(as, 0)((a, b) => b + 1) // O(n)
 
+  // Ex 3.10
+  @tailrec
+  def foldLeft[A,B](as: List[A], z: B)(f: (B, A) => B): B = as match {
+    case Nil => z
+    case Cons(x, xs) => foldLeft(xs, f(z, x))(f)
+  }
+
+  // Ex 3.11
+  def sum3(ints: List[Int]) = foldLeft(ints, 0)(_ + _)
+  def product3(ints: List[Int]) = foldLeft(ints, 1.0)(_ * _)
 }
