@@ -109,4 +109,11 @@ object List {
   def append[A](xs: List[A], ys: List[A]): List[A] = foldRight(xs, ys) { Cons(_, _) }
   def concatenate[A](lls: List[List[A]]): List[A] = foldRight(lls, List[A]()) { append(_, _) }
 
+  // Ex 3.16
+  // Write a function that transforms a list of integers by adding 1 to
+  // each element. (Reminder: this should be a pure function that returns
+  // a new List!)
+  def inc(ls: List[Int]): List[Int] = foldRight(ls, List[Int]()) { (a, b) => Cons(a + 1, b) }
+
+
 }
