@@ -14,6 +14,17 @@ object List {
   }
 
   def apply[A](as: A*): List[A] = if (as.isEmpty) Nil else Cons(as.head, apply(as.tail: _*))
+
+  // Currying of the function 'f' is needed to help the Scala compiler to infer
+  // the type of its arguments (e.g. _ + _ instead of _:Int + _:Int)
+  def foldRight[A, B](as: List[A], z: B)(f: (A, B) => B): B = as match {
+    case Nil => z
+    case Cons(x, xs) => f(x, foldRight(xs, z)(f))
+  }
+
+  def sum2(ints: List[Int]) = foldRight(ints, 0)(_ + _)
+
+  def product2(ints: List[Int]) = foldRight(ints, 1.0)(_ * _)
 }
 
 // Ex 3.1
@@ -66,4 +77,9 @@ object chapther3 {
     case Cons(x, Nil) => Nil
     case Cons(x, xs) => Cons(x, init(xs))
   }
+
+  // Ex 3.9
+  // Compute the length of a list using foldRight.
+  def length[A](as: List[A]): Int = foldRight(as, 0)((a, b) => b + 1) // O(n)
+
 }
