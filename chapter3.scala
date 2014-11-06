@@ -19,11 +19,12 @@ object List {
 // Ex 3.1
 // The result is 3 cause the matched case is the third one
 
-// Ex 3.2
-// Implement the function tail for removing the first element of a
-// List. Note that the function takes constant time. What are different
-// choices you could make in your implementation if the List is Nil?
 object chapther3 {
+
+  // Ex 3.2
+  // Implement the function tail for removing the first element of a
+  // List. Note that the function takes constant time. What are different
+  // choices you could make in your implementation if the List is Nil?
   def tail[A](ls: List[A]): List[A] = ls match {
     case Nil => Nil
     case Cons(x, xs) => xs // O(1)
@@ -55,5 +56,14 @@ object chapther3 {
     case Cons(x, xs) => if (f(x)) dropWhile(xs, f, Cons(x, intermediate)) else dropWhile(xs, f, intermediate)
   }
 
-
+  // Ex 3.6
+  // Implement a function, init, that returns a List consisting of all
+  // but the last element of a List. So, given List(1,2,3,4), init will
+  // return List(1,2,3). Why can’t this function be implemented in
+  // constant time like tail?
+  def init[A](l: List[A]): List[A] = l match {
+    case Nil => sys.error("init of an empty List!")
+    case Cons(x, Nil) => Nil
+    case Cons(x, xs) => Cons(x, init(xs))
+  }
 }
