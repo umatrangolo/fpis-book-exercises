@@ -1,3 +1,5 @@
+import scala.annotation._
+
 sealed trait List[+A]
 case object Nil extends List[Nothing]
 case class Cons[+A](head: A, tail: List[A]) extends List[A]
@@ -99,4 +101,12 @@ object List {
   // Ex 3.14
   // Implement append in terms of either foldLeft or foldRight.
   def append[A](ls: List[A], elem: A): List[A] = foldRight(ls, Cons(elem, Nil)) { Cons(_, _) }
+
+  // Ex 3.15
+  // Write a function that concatenates a list of lists into a single
+  // list. Its runtime should be linear in the total length of all
+  // lists. Try to use functions we have already defined.
+  def append[A](xs: List[A], ys: List[A]): List[A] = foldRight(xs, ys) { Cons(_, _) }
+  def concatenate[A](lls: List[List[A]]): List[A] = foldRight(lls, List[A]()) { append(_, _) }
+
 }
