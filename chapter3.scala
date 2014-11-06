@@ -89,4 +89,14 @@ object List {
   // Ex 3.11
   def sum3(ints: List[Int]) = foldLeft(ints, 0)(_ + _)
   def product3(ints: List[Int]) = foldLeft(ints, 1.0)(_ * _)
+
+  // Ex 3.12
+  // Write a function that returns the reverse of a list (given
+  // List(1,2,3) it returns List(3,2,1)). See if you can write it using a
+  // fold.
+  def reverse[A](ls: List[A]): List[A] = foldLeft(ls, List[A]()) { (b, a) => Cons(a, b) }
+
+  // Ex 3.14
+  // Implement append in terms of either foldLeft or foldRight.
+  def append[A](ls: List[A], elem: A): List[A] = foldRight(ls, Cons(elem, Nil)) { Cons(_, _) }
 }
