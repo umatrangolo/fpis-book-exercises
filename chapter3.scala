@@ -32,6 +32,10 @@ object List {
   def sum2(ints: List[Int]) = foldRight(ints, 0)(_ + _)
 
   def product2(ints: List[Int]) = foldRight(ints, 1.0)(_ * _)
+
+  // Ex 3.11
+  def sum3(ints: List[Int]) = foldLeft(ints, 0)(_ + _)
+  def product3(ints: List[Int]) = foldLeft(ints, 1.0)(_ * _)
 }
 
 // Ex 3.1
