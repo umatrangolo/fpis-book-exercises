@@ -115,5 +115,9 @@ object List {
   // a new List!)
   def inc(ls: List[Int]): List[Int] = foldRight(ls, List[Int]()) { (a, b) => Cons(a + 1, b) }
 
-
+  // Ex 3.17
+  // Write a function that turns each value in a List[Double] into a
+  // String. You can use the expression d.toString to convert some d:
+  // Double to a String.
+  def _toString(ls: List[Double]): List[String] = foldRight(ls, List[String]()) { (a, b) => Cons(a.toString, b) }
 }
