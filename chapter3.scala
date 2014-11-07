@@ -120,4 +120,11 @@ object List {
   // String. You can use the expression d.toString to convert some d:
   // Double to a String.
   def _toString(ls: List[Double]): List[String] = foldRight(ls, List[String]()) { (a, b) => Cons(a.toString, b) }
+
+  // Ex 3.18
+  // Write a function map that generalizes modifying each element in a
+  // list while maintaining the structure of the list.
+  def map[A,B](as: List[A])(f: A => B): List[B] = reverse(foldLeft(as, List[B]()) { (b, a) => Cons(f(a), b) })
+
+
 }
