@@ -131,4 +131,12 @@ object List {
   // they satisfy a given predicate. Use it to remove all odd numbers
   // from a List[Int].
   def filter[A](as: List[A])(f: A => Boolean): List[A] = reverse(foldLeft(as, List[A]()) { (b, a) => if (f(a)) Cons(a, b) else b })
+
+  // Ex 3.20
+  // Write a function flatMap that works like map except that the
+  // function given will return a list instead of a single result, and
+  // that list should be inserted into the final resulting list. For
+  // instance, flatMap(List(1,2,3))(i => List(i,i)) should result in
+  // List(1,1,2,2,3,3).
+  def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] = reverse(concatenate(foldLeft(as, List[List[B]]()) { (b, a) => Cons(f(a), b) }))
 }
