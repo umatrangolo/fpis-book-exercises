@@ -139,4 +139,8 @@ object List {
   // instance, flatMap(List(1,2,3))(i => List(i,i)) should result in
   // List(1,1,2,2,3,3).
   def flatMap[A,B](as: List[A])(f: A => List[B]): List[B] = reverse(concatenate(foldLeft(as, List[List[B]]()) { (b, a) => Cons(f(a), b) }))
+
+  // Ex 3.21
+  // Use flatMap to implement filter.
+  def filter2[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as) { a => if (f(a)) Cons(a, Nil) else Nil }
 }
