@@ -158,4 +158,24 @@ object List {
 
     reverse(loop(xs, ys, List[C]()))
   }
+
+  // Ex 3.24
+  // As an example, implement hasSubsequence for checking whether a List
+  // con- tains another List as a subsequence. For instance,
+  // List(1,2,3,4) would have List(1,2), List(2,3), and List(4) as
+  // subsequences, among others.
+  @tailrec
+  def hasSubsequence[A](sup: List[A], sub: List[A]): Boolean = {
+    def startsWith(ls: List[A], prefix: List[A]): Boolean = (ls, prefix) match {
+      case (_, Nil) => true
+      case (Cons(head, tail), Cons(head2, tail2)) if (head == head2) => startsWith(tail, tail2)
+      case _ => false
+    }
+
+    sup match {
+      case Nil => false
+      case Cons(x, xs) if startsWith(sup, sub) => true
+      case Cons(x, xs) => hasSubsequence(xs, sub)
+    }
+  }
 }
