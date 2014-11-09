@@ -142,5 +142,20 @@ object List {
 
   // Ex 3.21
   // Use flatMap to implement filter.
-  def filter2[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as) { a => if (f(a)) Cons(a, Nil) else Nil }
+  def filter2[A](as: List[A])(f: A => Boolean): List[A] = flatMap(as) { a => if (f(a)) Cons(a, Nil) else Nil  }
+
+  // Ex 3.21/3.22
+  // Write a function that accepts two lists and constructs a new list
+  // by adding corresponding elements. For example, List(1,2,3) and
+  // List(4,5,6) become List(5,7,9).
+  def zipWith[A, B, C](xs: List[A], ys: List[B])(f: (A, B) => C): List[C] = {
+    def loop(left: List[A], right: List[B], intermediate: List[C]): List[C] = (left, right) match {
+      case (Nil, Nil) => intermediate
+      case (rest, Nil) => intermediate
+      case (Nil, rest) => intermediate
+      case (Cons(leftHead, leftTail), Cons(rightHead, rightTail)) => loop(leftTail, rightTail, Cons(f(leftHead, rightHead), intermediate))
+    }
+
+    reverse(loop(xs, ys, List[C]()))
+  }
 }
