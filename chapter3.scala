@@ -205,4 +205,16 @@ object Tree {
 
     _maximum(tree, 0)
   }
+
+  // Ex 3.27
+  // Write a function depth that returns the maximum path length from the
+  // root of a tree to any leaf.
+  def maxDepth[A](tree: Tree[A]): Int = {
+    def _maxDepth(tree: Tree[A], intermediate: Int): Int = tree match {
+      case Leaf(v) => intermediate + 1
+      case Branch(left, right) => _maxDepth(left, intermediate).max(_maxDepth(right, intermediate))
+    }
+
+    _maxDepth(tree, 0)
+  }
 }
