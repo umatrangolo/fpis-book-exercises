@@ -193,4 +193,16 @@ object Tree {
     case Leaf(_) => 1
     case Branch(left, right) => size(left) + size(right) + 1
   }
+
+  // Ex 3.26
+  // Write a function maximum that returns the maximum element in a
+  // Tree[Int].
+  def maximum(tree: Tree[Int]): Int = {
+    def _maximum(tree: Tree[Int], intermediate: Int): Int = tree match {
+      case Leaf(v) => intermediate.max(v)
+      case Branch(left, right) => _maximum(left, intermediate).max(_maximum(right, intermediate)).max(intermediate)
+    }
+
+    _maximum(tree, 0)
+  }
 }
