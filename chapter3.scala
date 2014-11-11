@@ -197,33 +197,38 @@ object Tree {
   // Ex 3.26
   // Write a function maximum that returns the maximum element in a
   // Tree[Int].
-  def maximum(tree: Tree[Int]): Int = {
-    def _maximum(tree: Tree[Int], intermediate: Int): Int = tree match {
-      case Leaf(v) => intermediate.max(v)
-      case Branch(left, right) => _maximum(left, intermediate).max(_maximum(right, intermediate)).max(intermediate)
-    }
-
-    _maximum(tree, 0)
+  def maximum(tree: Tree[Int]): Int = tree match {
+    case Leaf(v) => v
+    case Branch(left, right) => maximum(left).max(maximum(right))
   }
 
   // Ex 3.27
   // Write a function depth that returns the maximum path length from the
   // root of a tree to any leaf.
-  def maxDepth[A](tree: Tree[A]): Int = {
-    def _maxDepth(tree: Tree[A], intermediate: Int): Int = tree match {
-      case Leaf(v) => intermediate + 1
-      case Branch(left, right) => _maxDepth(left, intermediate).max(_maxDepth(right, intermediate))
-    }
-
-    _maxDepth(tree, 0)
+  def maxDepth[A](tree: Tree[A]): Int = tree match {
+    case Leaf(v) => 0
+    case Branch(left, right) => maxDepth(left).max(maxDepth(right)) + 1
   }
 
   // Ex 3.28
   // Write a function map, analogous to the method of the same name on
-  // List, that modi- fies each element in a tree with a given function
+  // List, that modifies each element in a tree with a given function
   def map[A,B](ts: Tree[A])(f: A => B): Tree[B] = ts match {
     case Leaf(a) => Leaf(f(a))
     case Branch(left, right) => Branch(map(left)(f), map(right)(f))
   }
 
+  // Ex 3.29
+  // Generalize size, maximum, depth, and map, writing a new function
+  // fold that abstracts over their similarities. Reimplement them in
+  // terms of this more general function.
+  def fold[A, B](ts: Tree[A])(f: A => B)(g: (B, B) => B): B = ts match {
+    case Leaf(a) => f(a)
+    case Branch(left, right) => g(fold(left)(f)(g), fold(right)(f)(g))
+  }
+
+  def size2[A](tree: Tree[A]): Int = fold(tree) { a => 1 } { 1 + _ + _ }
+  def maximum2(tree: Tree[Int]): Int = fold(tree) { a => a } { _.max(_) }
+  def maxDepth2[A](tree: Tree[A]): Int = fold(tree) { a => 0 } { (d1, d2) => 1 + (d1.max(d2)) }
+  def map2[A,B](tree: Tree[A])(f: A => B): Tree[B] = fold(tree) { a => Leaf(f(a)) } { Branch(_, _) }
 }
