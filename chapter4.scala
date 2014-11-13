@@ -24,3 +24,13 @@ case class Some[+A](private val elem: A) extends Option[A] {
   override def orElse[B >: A](ob: => Option[B]): Option[B] = this
   override def filter(f: A => Boolean): Option[A] = if (f(elem)) this else None
 }
+
+object Chapter4 {
+
+  // Ex 4.2 Implement the variance function in terms of flatMap. If the
+  // mean of a sequence is m, the variance is the mean of math.pow(x - m, 2)
+  // for each element x in the sequence.
+  def mean(xs: Seq[Double]): Option[Double] = if (xs.isEmpty) None else Some(xs.sum / xs.size)
+  def variance(xs: Seq[Double]): Option[Double] = mean(xs).flatMap { m => mean(xs.map { x => math.pow(x - m, 2) }) }
+
+}
