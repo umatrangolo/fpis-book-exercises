@@ -95,4 +95,15 @@ case class Right[+A](value: A) extends Either[Nothing, A] {
 
 object Either {
   def Try[A](a: => A): Either[Exception, A] = try Right(a) catch { case e: Exception => Left(e) }
+
+  // Ex 4.8
+  // Implement sequence and traverse for Either. These should return the
+  // first error that’s encountered, if there is one.
+  def sequence[E, A](es: List[Either[E, A]]): Either[E, List[A]] = traverse(es) { e => e }
+
+  def traverse[E, A, B](xs: List[A])(f: A => Either[E, B]): Either[E, List[B]] = xs match {
+    case Nil => Right(List.empty[B])
+    case head :: tail => f(head).flatMap { r => traverse(tail)(f).map { r :: _ } }
+  }
+
 }
