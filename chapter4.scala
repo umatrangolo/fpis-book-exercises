@@ -35,6 +35,8 @@ object Chapter4 {
 
   def lift[A,B](f: A => B): Option[A] => Option[B] = _.map(f)
 
+  def Try[A](a: => A): Option[A] = try Some(a) catch { case e: Exception => None }
+
   // Ex 4.3
   // Write a generic function map2 that combines two Option(s)
   // values using a binary function. If either Option value is None,
@@ -57,5 +59,14 @@ object Chapter4 {
     case h :: t => h.flatMap { hh => sequence(t).map { hh :: _ } }
   }
 
-
+  // Ex 4.5
+  // Implement this function. It’s straightforward to do using map and
+  // sequence, but try for a more efficient implementation that only
+  // looks at the list once. In fact, implement sequence in terms of
+  // traverse.
+  def traverse[A, B](xs: List[A])(f: A => Option[B]): Option[List[B]] = xs match {
+    case Nil => Some(Nil)
+    case head :: tail => f(head).flatMap { res => traverse(tail)(f).map { res :: _ } }
+  }
+  def sequence2[A](a: List[Option[A]]): Option[List[A]] = traverse(a) { x => x }
 }
