@@ -45,4 +45,17 @@ object Chapter4 {
   } yield {
     f(ra, rb)
   }
+
+  // Ex 4.4
+  // Write a function sequence that combines a list of Options into one
+  // Option containing a list of all the Some values in the original
+  // list. If the original list contains None even once, the result of
+  // the function should be None; otherwise the result should be Some
+  // with a list of all the values.
+  def sequence[A](a: List[Option[A]]): Option[List[A]] = a match {
+    case Nil => Some(Nil)
+    case h :: t => h.flatMap { hh => sequence(t).map { hh :: _ } }
+  }
+
+
 }
