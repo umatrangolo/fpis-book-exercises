@@ -1,3 +1,5 @@
+package fpis.laziness
+
 sealed trait Stream[+A] {
   def headOption: Option[A]
 
@@ -33,6 +35,10 @@ sealed trait Stream[+A] {
   // Ex 5.5
   // Use foldRight to implement takeWhile.
   def takeWhile2(p: A => Boolean): Stream[A]
+
+  // Ex 5.6
+  // Implement headOption using foldRight.
+  def headOption2: Option[A]
 }
 
 case object Empty extends Stream[Nothing] {
@@ -41,8 +47,9 @@ case object Empty extends Stream[Nothing] {
   override def take(n: Int) = Stream.empty
   override def drop(n: Int) = Stream.empty
   override def takeWhile(p: Nothing => Boolean) = Stream.empty
-  override def forAll() = false
-  override def takeWhile2(p: A => Boolean) = Stream.empty
+  override def forAll(p: Nothing => Boolean): Boolean = false
+  override def takeWhile2(p: Nothing => Boolean) = Stream.empty
+  override def headOption2: Option[Nothing] = None
 }
 
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
@@ -59,7 +66,8 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
     case _ => Stream.empty
   }
   override def forAll(p: A => Boolean): Boolean = foldRight(true) { (a, b) => p(a) && b }
-  override def takeWhile2(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A]) { (a, b) => if (p(a)) Cons(a, b) else Stream.empty[A] }
+  override def takeWhile2(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A]) { (a, b) => if (p(a)) Stream.cons(a, b) else Stream.empty[A] }
+  override def headOption2: Option[A] = foldRight(None: Option[A]) { (h, _) => Some(h) }
 }
 
 object Stream {
