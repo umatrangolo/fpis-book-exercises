@@ -11,13 +11,19 @@ sealed trait Stream[+A] {
   // Stream, and drop(n) for skipping the first n elements of a Stream.
   def take(n: Int): Stream[A]
   def drop(n: Int): Stream[A]
+
+  // Ex 5.3
+  // Write the function takeWhile for returning all starting elements of
+  // a Stream that match the given predicate.
+  def takeWhile(p: A => Boolean): Stream[A]
 }
 
 case object Empty extends Stream[Nothing] {
   override def headOption = None
   override def toList = Nil
-  override def take(n: Int) = Empty
-  override def drop(n: Int) = Empty
+  override def take(n: Int) = Stream.empty
+  override def drop(n: Int) = Stream.empty
+  override def takeWhile(p: Nothing => Boolean) = Stream.empty
 }
 
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
@@ -28,6 +34,11 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
     case Cons(h, t) => Cons(h, () => t().take(n - 1))
   }
   override def drop(n: Int): Stream[A] = if (n == 0) this else t().drop(n - 1)
+  override def takeWhile(p: A => Boolean): Stream[A] = this match {
+    case Cons(h, t) if p(h()) => Cons(h, () => t().takeWhile(p))
+    case Cons(h, t) => t().takeWhile(p)
+    case _ => Stream.empty
+  }
 }
 
 object Stream {
