@@ -39,6 +39,14 @@ sealed trait Stream[+A] {
   // Ex 5.6
   // Implement headOption using foldRight.
   def headOption2: Option[A]
+
+  // Ex 5.7
+  // Implement map, filter, append, and flatMap using foldRight. The
+  // append method should be non-strict in its argument.
+  def map[B](f: A => B): Stream[B]
+  def filter(p: A => Boolean): Stream[A]
+  def flatMap[B](f: A => Stream[B]): Stream[B]
+  def append[B >: A](other: => Stream[B]): Stream[B]
 }
 
 case object Empty extends Stream[Nothing] {
@@ -50,6 +58,10 @@ case object Empty extends Stream[Nothing] {
   override def forAll(p: Nothing => Boolean): Boolean = false
   override def takeWhile2(p: Nothing => Boolean) = Stream.empty
   override def headOption2: Option[Nothing] = None
+  override def map[B](f: Nothing => B) = Stream.empty[B]
+  override def filter(p: Nothing => Boolean) = Stream.empty[Nothing]
+  override def flatMap[B](f: Nothing => Stream[B]) = Stream.empty[B]
+  override def append[B >: Nothing](other: => Stream[B]) = other
 }
 
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
@@ -68,6 +80,10 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
   override def forAll(p: A => Boolean): Boolean = foldRight(true) { (a, b) => p(a) && b }
   override def takeWhile2(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A]) { (a, b) => if (p(a)) Stream.cons(a, b) else Stream.empty[A] }
   override def headOption2: Option[A] = foldRight(None: Option[A]) { (h, _) => Some(h) }
+  override def map[B](f: A => B): Stream[B] = foldRight(Stream.empty[B]) { (h, t) => Stream.cons(f(h), t) }
+  override def filter(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A]) { (h, t) => if (p(h)) Stream.cons(h, t) else t }
+  override def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(Stream.empty[B]) { (h, t) => f(h).append(t) }
+  override def append[B >: A](other: => Stream[B]): Stream[B] = foldRight(other) { (h, t) => Stream.cons(h, t) }
 }
 
 object Stream {
