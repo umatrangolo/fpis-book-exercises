@@ -29,6 +29,10 @@ sealed trait Stream[+A] {
   // a given predicate. Your implementation should terminate the
   // traversal as soon as it encounters a nonmatching value.
   def forAll(p: A => Boolean): Boolean
+
+  // Ex 5.5
+  // Use foldRight to implement takeWhile.
+  def takeWhile2(p: A => Boolean): Stream[A]
 }
 
 case object Empty extends Stream[Nothing] {
@@ -38,6 +42,7 @@ case object Empty extends Stream[Nothing] {
   override def drop(n: Int) = Stream.empty
   override def takeWhile(p: Nothing => Boolean) = Stream.empty
   override def forAll() = false
+  override def takeWhile2(p: A => Boolean) = Stream.empty
 }
 
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
@@ -53,7 +58,8 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
     case Cons(h, t) => t().takeWhile(p)
     case _ => Stream.empty
   }
-  def forAll(p: A => Boolean): Boolean = foldRight(true) { (a, b) => p(a) && b }
+  override def forAll(p: A => Boolean): Boolean = foldRight(true) { (a, b) => p(a) && b }
+  override def takeWhile2(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A]) { (a, b) => if (p(a)) Cons(a, b) else Stream.empty[A] }
 }
 
 object Stream {
