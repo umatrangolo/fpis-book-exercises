@@ -47,6 +47,22 @@ sealed trait Stream[+A] {
   def filter(p: A => Boolean): Stream[A]
   def flatMap[B](f: A => Stream[B]): Stream[B]
   def append[B >: A](other: => Stream[B]): Stream[B]
+
+  // Ex 5.13
+  // Use unfold to implement map, take, takeWhile, zipWith (as in chapter
+  //   3), and zipAll. The zipAll function should continue the traversal as
+  // long as either stream has more elements—it uses Option to indicate
+  // whether each stream has been exhausted.
+  def map2[B](f: A => B): Stream[B]
+  def take2(n: Int): Stream[A]
+  def takeWhile3(p: A => Boolean): Stream[A]
+  def zipWith[B, C](s: Stream[B])(f: (A, B) => C): Stream[C]
+  def zipAll[B](other: Stream[B]): Stream[(Option[A],Option[B])] = Stream.unfold(this, other) {
+    case (Cons(h1, t1), Cons(h2, t2)) => Some((Some(h1()), Some(h2())), (t1(), t2()))
+    case (Cons(h1, t1), _) => Some((Some(h1()), None), (t1(), Stream.empty[B]))
+    case (_, Cons(h2, t2)) => Some(((None, Some(h2())), (Stream.empty[A], t2())))
+    case _ => None
+  }
 }
 
 case object Empty extends Stream[Nothing] {
@@ -62,6 +78,10 @@ case object Empty extends Stream[Nothing] {
   override def filter(p: Nothing => Boolean) = Stream.empty[Nothing]
   override def flatMap[B](f: Nothing => Stream[B]) = Stream.empty[B]
   override def append[B >: Nothing](other: => Stream[B]) = other
+  override def map2[B](f: Nothing => B): Stream[B] = Stream.empty[B]
+  override def take2(n: Int) = Stream.empty[Nothing]
+  override def takeWhile3(p: Nothing => Boolean) = Stream.empty[Nothing]
+  override def zipWith[B, C](s2: Stream[B])(f: (Nothing, B) => C): Stream[C] = Stream.empty[C]
 }
 
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
@@ -84,6 +104,22 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
   override def filter(p: A => Boolean): Stream[A] = foldRight(Stream.empty[A]) { (h, t) => if (p(h)) Stream.cons(h, t) else t }
   override def flatMap[B](f: A => Stream[B]): Stream[B] = foldRight(Stream.empty[B]) { (h, t) => f(h).append(t) }
   override def append[B >: A](other: => Stream[B]): Stream[B] = foldRight(other) { (h, t) => Stream.cons(h, t) }
+  override def map2[B](f: A => B): Stream[B] = Stream.unfold(this: Stream[A]) {
+    case Cons(h, t) => Some((f(h()), t()))
+    case _ => None
+  }
+  override def take2(n: Int): Stream[A] = Stream.unfold((this: Stream[A], n)) {
+    case (Cons(h, t), n) if n > 0 => Some((h(), (t(), n - 1)))
+    case _ => None
+  }
+  override def takeWhile3(p: A => Boolean): Stream[A] = Stream.unfold((this: Stream[A])) {
+    case Cons(h, t) if p(h()) => Some(h(), t())
+    case _ => None
+  }
+  override def zipWith[B, C](other: Stream[B])(f: (A, B) => C): Stream[C] = Stream.unfold((this: Stream[A], other: Stream[B])) {
+    case (Cons(h1, t1), Cons(h2, t2)) => Some((f(h1(), h2()), (t1(), t2())))
+    case _ => None
+  }
 }
 
 object Stream {
