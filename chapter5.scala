@@ -16,6 +16,19 @@ sealed trait Stream[+A] {
   // Write the function takeWhile for returning all starting elements of
   // a Stream that match the given predicate.
   def takeWhile(p: A => Boolean): Stream[A]
+
+  def foldRight[B](z: => B)(f: (A, => B) => B): B = this match {
+    case Cons(h, t) => f(h(), t().foldRight(z)(f))
+    case _ => z
+  }
+
+  def exists(p: A => Boolean): Boolean = foldRight(false) { (a, b) => p(a) || b }
+
+  // Ex 5.4
+  // Implement forAll, which checks that all elements in the Stream match
+  // a given predicate. Your implementation should terminate the
+  // traversal as soon as it encounters a nonmatching value.
+  def forAll(p: A => Boolean): Boolean
 }
 
 case object Empty extends Stream[Nothing] {
@@ -24,6 +37,7 @@ case object Empty extends Stream[Nothing] {
   override def take(n: Int) = Stream.empty
   override def drop(n: Int) = Stream.empty
   override def takeWhile(p: Nothing => Boolean) = Stream.empty
+  override def forAll() = false
 }
 
 case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
@@ -39,6 +53,7 @@ case class Cons[+A](h: () => A, t: () => Stream[A]) extends Stream[A] {
     case Cons(h, t) => t().takeWhile(p)
     case _ => Stream.empty
   }
+  def forAll(p: A => Boolean): Boolean = foldRight(true) { (a, b) => p(a) && b }
 }
 
 object Stream {
