@@ -96,4 +96,13 @@ object Stream {
   def empty[A]: Stream[A] = Empty
 
   def apply[A](as: A*): Stream[A] = if (as.isEmpty) empty else cons(as.head, apply(as.tail: _*))
+
+  // Ex 5.8
+  // Write a function which returns an infinite Stream of a given value.
+  def constant[A](a: A): Stream[A] = cons(a, constant(a))
+  def constant2[A](a: A): Stream[A] = {
+    lazy val tail: Stream[A] = Cons(() => a, () => tail)
+    tail
+  }
+
 }
