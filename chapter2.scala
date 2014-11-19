@@ -1,3 +1,5 @@
+package fpis.functions
+
 import scala.annotation.tailrec
 
 object chapter2 {

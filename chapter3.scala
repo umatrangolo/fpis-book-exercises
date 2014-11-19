@@ -1,3 +1,5 @@
+package fpis.datastructures
+
 import scala.annotation._
 
 sealed trait List[+A]
@@ -230,5 +232,5 @@ object Tree {
   def size2[A](tree: Tree[A]): Int = fold(tree) { a => 1 } { 1 + _ + _ }
   def maximum2(tree: Tree[Int]): Int = fold(tree) { a => a } { _.max(_) }
   def maxDepth2[A](tree: Tree[A]): Int = fold(tree) { a => 0 } { (d1, d2) => 1 + (d1.max(d2)) }
-  def map2[A,B](tree: Tree[A])(f: A => B): Tree[B] = fold(tree) { a => Leaf(f(a)) } { Branch(_, _) }
+  def map2[A, B](tree: Tree[A])(f: A => B): Tree[B] = fold(tree) { a => Leaf(f(a)): Tree[B] } { Branch(_, _) }
 }

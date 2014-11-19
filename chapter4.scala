@@ -1,3 +1,5 @@
+package fpis.errors
+
 import scala.{ Option => _, Either => _ }
 
 sealed trait Option[+A] {
