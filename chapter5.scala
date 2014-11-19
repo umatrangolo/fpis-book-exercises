@@ -109,4 +109,12 @@ object Stream {
   // Write a function that generates an infinite stream of integers,
   // starting from n, then n + 1, n + 2, and so on.
   def from(n: Int): Stream[Int] = Stream.cons(n, from(n + 1))
+
+  // Ex 5.10
+  // Write a function fibs that generates the infinite stream of
+  // Fibonacci numbers: 0, 1, 1, 2, 3, 5, 8, and so on.
+  def fib(): Stream[Int] = {
+    def _fib(a: Int, b: Int): Stream[Int] = Stream.cons(a, _fib(b, a + b))
+    Stream.cons(0, _fib(0, 1))
+  }
 }
