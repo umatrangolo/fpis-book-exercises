@@ -126,5 +126,15 @@ object Stream {
     case Some((h, s)) => Stream.cons(h, unfold(s)(f))
     case None => Stream.empty
   }
+
+  // unfold() is an example of a co-recursive function. A co-recursive
+  // function works by continually producing new values until they
+  // stop. A recursive function instead consumes data and stops when it
+  // consumed it all.
+
+  // Ex 5.12
   def fib2(): Stream[Int] = unfold((0, 1)) { z => Some((z._1, (z._2, z._1 + z._2))) }
+  def from2(n: Int): Stream[Int] = unfold(n) { z => Some((z + 1, z + 1)) }
+  def constant3[A](a: A): Stream[A] = unfold(a) { z => Some(a, a) }
+  val ones: Stream[Int] = unfold(1) { z => Some(1, 1) }
 }
