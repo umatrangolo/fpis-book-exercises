@@ -63,6 +63,14 @@ sealed trait Stream[+A] {
     case (_, Cons(h2, t2)) => Some(((None, Some(h2())), (Stream.empty[A], t2())))
     case _ => None
   }
+
+  // Ex 5.14
+  // Implement startsWith using functions you’ve written. It should check
+  // if one Stream is a prefix of another. For instance, Stream(1,2,3)
+  // startsWith Stream(1,2) would be true.
+  def startsWith[A](s: Stream[A]): Boolean = zipAll(s).takeWhile { !_._2.isEmpty }.forAll {
+    case (h,h2) => h == h2
+  }
 }
 
 case object Empty extends Stream[Nothing] {
