@@ -52,4 +52,18 @@ object Random {
     val (d3, nextRng3) = double(nextRng2)
     ((d1, d2, d3), nextRng3)
   }
+
+  // Ex 6.4
+  // Write a function to generate a list of random integers.
+  def ints(count: Int)(rng: Rng): (List[Int], Rng) = {
+    def gen(n: Int, rng: Rng, intermediate: List[Int]): (List[Int], Rng) = n match {
+      case 0 => (intermediate, rng)
+      case n => {
+        val (nextInt, nextRng) = nonNegativeInt(rng)
+        gen(n - 1, nextRng, nextInt :: intermediate)
+      }
+    }
+    gen(count, rng, List.empty[Int])
+  }
+
 }
