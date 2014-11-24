@@ -33,4 +33,23 @@ object Random {
     val (nextNonNegativeInt, nextRng) = nonNegativeInt(rng)
     if (nextNonNegativeInt == Int.MaxValue) double(nextRng) else (nextNonNegativeInt.toDouble / Int.MaxValue, nextRng)
   }
+
+  // Ex 6.3
+  // Write functions to generate an (Int, Double) pair, a (Double, Int)
+  // pair, and a (Double, Double, Double) 3-tuple. You should be able to
+  // reuse the functions you’ve already written.
+  def intDouble(rng: Rng): ((Int,Double), Rng) = {
+    val (nextInt, nextRng) = nonNegativeInt(rng)
+    ((nextInt, double(rng)._1), nextRng)
+  }
+  def doubleInt(rng: Rng): ((Double,Int), Rng) = {
+    val (id, nextRng) = intDouble(rng)
+    ((id._2, id._1), nextRng)
+  }
+  def double3(rng: Rng): ((Double,Double,Double), Rng) = {
+    val (d1, nextRng1) = double(rng)
+    val (d2, nextRng2) = double(nextRng1)
+    val (d3, nextRng3) = double(nextRng2)
+    ((d1, d2, d3), nextRng3)
+  }
 }
