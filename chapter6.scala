@@ -26,6 +26,8 @@ object Random {
     (scala.math.abs(rnd), rng2)
   }
 
+  val int = nonNegativeInt
+
   // Ex 6.2
   // Write a function to generate a Double between 0 and 1, not
   // including 1. Note: You can use Int.MaxValue to obtain the maximum
@@ -81,4 +83,17 @@ object Random {
   // Ex 6.5
   // Use map to reimplement double in a more elegant way.
   def double2: Rand[Double] = map(nonNegativeInt) { int => if (int < Int.MaxValue) int.toDouble else (int - 1).toDouble }
+
+  // Ex 6.6
+  // Write the implementation of map2 based on the following
+  // signature. This function takes two actions, ra and rb, and a
+  // function f for combining their results, and returns a new action
+  // that combines them.
+  def map2[A, B, C](ra: Rand[A], rb: Rand[B])(f: (A, B) => C): Rand[C] = rng => {
+    val (a, nra) = ra(rng)
+    val (b, nrb) = rb(rng)
+    (f(a, b), nrb)
+  }
+
+  def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A,B)] = map2(ra, rb)((_, _))
 }
