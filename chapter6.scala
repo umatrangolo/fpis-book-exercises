@@ -14,12 +14,14 @@ case class SimpleRng(seed: Long) extends Rng {
 }
 
 object Random {
+  type Rand[+A] = Rng => (A, Rng)
+
   // Ex 6.1
   // Write a function that uses RNG.nextInt to generate a random
   // integer between 0 and Int.maxValue (inclusive). Make sure to handle
   // the corner case when nextInt returns Int.MinValue, which doesn’t
   // have a non-negative counterpart.
-  def nonNegativeInt(rng: Rng): (Int, Rng) = {
+  val nonNegativeInt: Rand[Int] = { rng =>
     val (rnd, rng2) = rng.nextInt
     (scala.math.abs(rnd), rng2)
   }
@@ -29,7 +31,7 @@ object Random {
   // including 1. Note: You can use Int.MaxValue to obtain the maximum
   // positive integer value, and you can use x.toDouble to convert an x:
   // Int to a Double.
-  def double(rng: Rng): (Double, Rng) = {
+  val double: Rand[Double] = { rng =>
     val (nextNonNegativeInt, nextRng) = nonNegativeInt(rng)
     if (nextNonNegativeInt == Int.MaxValue) double(nextRng) else (nextNonNegativeInt.toDouble / Int.MaxValue, nextRng)
   }
@@ -38,15 +40,17 @@ object Random {
   // Write functions to generate an (Int, Double) pair, a (Double, Int)
   // pair, and a (Double, Double, Double) 3-tuple. You should be able to
   // reuse the functions you’ve already written.
-  def intDouble(rng: Rng): ((Int,Double), Rng) = {
+  val intDouble: Rand[(Int, Double)] = { rng =>
     val (nextInt, nextRng) = nonNegativeInt(rng)
     ((nextInt, double(rng)._1), nextRng)
   }
-  def doubleInt(rng: Rng): ((Double,Int), Rng) = {
+
+  val doubleInt: Rand[(Double,Int)] = { rng =>
     val (id, nextRng) = intDouble(rng)
     ((id._2, id._1), nextRng)
   }
-  def double3(rng: Rng): ((Double,Double,Double), Rng) = {
+
+  def double3(rng: Rng): Rand[(Double,Double,Double)] = { rng =>
     val (d1, nextRng1) = double(rng)
     val (d2, nextRng2) = double(nextRng1)
     val (d3, nextRng3) = double(nextRng2)
@@ -66,4 +70,15 @@ object Random {
     gen(count, rng, List.empty[Int])
   }
 
+  def unit[A](a: A): Rand[A] = rng => (a, rng)
+  def map[A,B](s: Rand[A])(f: A => B): Rand[B] = rng => {
+    val (a, rng2) = s(rng)
+    (f(a), rng2)
+  }
+
+  def nonNegativeEven: Rand[Int] = map(nonNegativeInt) { i => i - i % 2 }
+
+  // Ex 6.5
+  // Use map to reimplement double in a more elegant way.
+  def double2: Rand[Double] = map(nonNegativeInt) { int => if (int < Int.MaxValue) int.toDouble else (int - 1).toDouble }
 }
