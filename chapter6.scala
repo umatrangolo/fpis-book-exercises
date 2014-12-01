@@ -96,4 +96,18 @@ object Random {
   }
 
   def both[A,B](ra: Rand[A], rb: Rand[B]): Rand[(A,B)] = map2(ra, rb)((_, _))
+
+  // Ex 6.7
+  // If you can combine two RNG transitions, you should be able to
+  // combine a whole list of them. Implement sequence for combining a List
+  // of transitions into a single transition. Use it to reimplement the
+  // ints function you wrote before. For the latter,you can use the
+  // standard library function List.fill(n)(x) to make a list with x
+  // repeated n times.
+  def sequence[A](fs: List[Rand[A]]): Rand[List[A]] = rng => fs.foldLeft((List.empty[A], rng)) { (b, rn) =>
+    val (nextA, nextRng) = rn(b._2)
+    (nextA :: b._1, nextRng)
+  }
+  def ints2(count: Int)(rng: Rng): (List[Int], Rng) = sequence(List.fill[Rand[Int]](count){ rng => rng.nextInt })(rng)
+
 }
