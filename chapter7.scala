@@ -90,4 +90,14 @@ object Exs {
     choiceN(n)(List(t, f))
   }
 
+  // Ex 7.12
+  // There’s still something rather arbitrary about choiceN. The choice
+  // of List seems overly specific. Why does it matter what sort of
+  // container we have? For instance, what if, instead of a list of
+  // computations, we have a Map of them:
+  def choiceMap[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] = ex => {
+    val k: K = run(ex)(key).get
+    run(ex)(choices(k))
+  }
+
 }
