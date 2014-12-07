@@ -54,4 +54,17 @@ object Exs {
 
   // Ex 7.4
   def asyncF[A, B](f: A => B): A => Par[B] = a => lazyUnit(f(a))
+
+  def sortPar(parList: Par[List[Int]]): Par[List[Int]] = map2(parList, unit(())) { (a, _) => a.sorted }
+
+  def map[A, B](pa: Par[A])(f: A => B): Par[B] = map2(pa, unit(())) { (a, _) => f(a) }
+  def sortPar2(parList: Par[List[Int]]): Par[List[Int]] = map(parList) { _.sorted }
+
+  // Ex 7.5
+  // Write this function, called sequence. No additional primitives are required. Do not call run.
+  def sequence[A](ps: List[Par[A]]): Par[List[A]] = ps match {
+    case Nil => unit(Nil)
+    case h :: t => map2(h, fork(sequence(t))) { _ :: _ }
+  }
+
 }
