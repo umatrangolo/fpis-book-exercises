@@ -67,4 +67,27 @@ object Exs {
     case h :: t => map2(h, fork(sequence(t))) { _ :: _ }
   }
 
+  def parMap[A, B](ps: List[A])(f: A => B): Par[List[B]] = fork {
+    val fbs = ps.map { asyncF(f) }
+    sequence(fbs)
+  }
+
+  // Ex 7.6
+  // Implement parFilter, which filters elements of a list in parallel.
+  def parFilter[A](as: List[A])(f: A => Boolean): Par[List[A]] = fork {
+    val pars: List[Par[List[A]]] = as.map { asyncF((a: A) => if (f(a)) List(a) else List()) }
+    map(sequence(pars))(_.flatten)
+  }
+
+  // Ex 7.11
+  // Implement choiceN and then choice in terms of choiceN.
+  def choiceN[A](n: Par[Int])(choices: List[Par[A]]): Par[A] = ex => {
+    val choice = run(ex)(n).get
+    run(ex)(choices(choice))
+  }
+  def choice[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = {
+    val n: Par[Int] = map(cond) { c => if (c) 0 else 1 }
+    choiceN(n)(List(t, f))
+  }
+
 }
