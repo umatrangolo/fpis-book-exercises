@@ -100,4 +100,11 @@ object Exs {
     run(ex)(choices(k))
   }
 
+  // Ex 7.13
+  // Implement this new primitive chooser, and then use it to implement
+  // choice and choiceN.
+  def chooser[A,B](pa: Par[A])(choices: A => Par[B]): Par[B] = ex => {
+    val a: A = run(ex)(pa).get
+    run(ex)(choices(a))
+  }
 }
