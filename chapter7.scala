@@ -58,6 +58,8 @@ object Exs {
   def sortPar(parList: Par[List[Int]]): Par[List[Int]] = map2(parList, unit(())) { (a, _) => a.sorted }
 
   def map[A, B](pa: Par[A])(f: A => B): Par[B] = map2(pa, unit(())) { (a, _) => f(a) }
+  def flatMap[A, B](pa: Par[A])(f: A => Par[B]): Par[B] = chooser(pa)(f)
+
   def sortPar2(parList: Par[List[Int]]): Par[List[Int]] = map(parList) { _.sorted }
 
   // Ex 7.5
@@ -103,8 +105,16 @@ object Exs {
   // Ex 7.13
   // Implement this new primitive chooser, and then use it to implement
   // choice and choiceN.
-  def chooser[A,B](pa: Par[A])(choices: A => Par[B]): Par[B] = ex => {
+  def chooser[A, B](pa: Par[A])(choices: A => Par[B]): Par[B] = ex => {
     val a: A = run(ex)(pa).get
     run(ex)(choices(a))
   }
+  def choice2[A](cond: Par[Boolean])(t: Par[A], f: Par[A]): Par[A] = chooser(cond) { c => if (c) t else f }
+  def choiceMap2[K, V](key: Par[K])(choices: Map[K, Par[V]]): Par[V] = chooser(key) { k => choices(k) }
+
+  // Ex 7.14
+  // Implement join. Can you see how to implement flatMap using join? And
+  // can you implement join using flatMap?
+  def join[A](a: Par[Par[A]]): Par[A] = ex => run(ex) { run(ex)(a).get }
+  def flatMap2[A, B](pa: Par[A])(f: A => Par[B]): Par[B] = join(map(pa)(f))
 }
