@@ -2,9 +2,16 @@ package fpis.testing
 
 import fpis.state._
 
-case class Gen[A](sample: State[Rng, A])
+case class Gen[A](sample: State[Rng, A]) {
 
-object Props {
+  // Ex 8.6
+  // Implement flatMap, and then use it to implement this more dynamic
+  // version of listOfN. Put flatMap and listOfN in the Gen class.
+  def flatMap[B](f: A => Gen[B]): Gen[B] = Gen(sample.flatMap { a => f(a).sample })
+  def listOfN(size: Gen[Int]): Gen[List[A]] = size.flatMap { n => Gen.listOfN(n, this) }
+}
+
+object Gen {
 
   // Ex 8.3
   // Assuming the following representation of Prop, implement && as a
