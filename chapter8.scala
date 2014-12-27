@@ -37,4 +37,9 @@ object Gen {
   def unit[A](a: => A): Gen[A] = Gen(State.unit(a))
   def boolean: Gen[Boolean] = Gen(State(Random.int).map { r => r % 2 == 0 } )
   def listOfN[A](n: Int, g: Gen[A]): Gen[List[A]] = Gen(State.sequence(List.fill(n)(g.sample)))
+
+  // Ex 8.7
+  // Implement union, for combining two generators of the same type into
+  // one, by pulling values from each generator with equal likelihood.
+  def union[A](g1: Gen[A], g2: Gen[A]): Gen[A] = boolean.flatMap { b => if (b) g1 else g2 }
 }
