@@ -56,4 +56,17 @@ object Monoids {
     override def op(a1: A => A, a2: A => A): A => A = a => a2(a1(a))
     override def zero: A => A = a => a
   }
+
+  // Ex 10.4
+  // Use the property-based testing framework we developed in part 2 to
+  // implement a property for the monoid laws. Use your property to test
+  // the monoids we’ve written.
+  // def monoidLaws[A](m: Monoid[A], gen: Gen[A]): Prop = ???
+
+  // Ex 10.5
+  // Implement foldMap.
+  // def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B = as.map(f).foldLeft(m.zero)(m.op)
+  def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B = as.foldLeft(m.zero) { (b, a) => m.op(b, f(a)) }
+
+
 }
