@@ -68,5 +68,25 @@ object Monoids {
   // def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B = as.map(f).foldLeft(m.zero)(m.op)
   def foldMap[A,B](as: List[A], m: Monoid[B])(f: A => B): B = as.foldLeft(m.zero) { (b, a) => m.op(b, f(a)) }
 
+  // Ex 10.6
+  // The foldMap function can be implemented using either foldLeft or
+  // fold- Right. But you can also write foldLeft and foldRight using
+  // foldMap!
+  def foldMap2[A,B](as: List[A], m: Monoid[B])(f: A => B): B = ??? // TODO
 
+  // Ex 10.7
+  // Implement a foldMap for IndexedSeq. Your implementation should use
+  // the strategy of splitting the sequence in two, recursively
+  // processing each half, and then adding the answers together with the
+  // monoid.
+  def foldMapV[A,B](v: IndexedSeq[A], m: Monoid[B])(f: A => B): B = v match {
+    case xs if xs.isEmpty => m.zero
+    case xs if xs.size == 1 => f(xs.head)
+    case xs => {
+      val median = xs.size / 2
+      val (left, right) = xs.splitAt(median)
+      m.op(foldMapV(left, m)(f), foldMapV(right, m)(f))
+    }
+
+  }
 }
