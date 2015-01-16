@@ -21,6 +21,18 @@ trait Monad[F[_]] extends Functor[F] {
 
   def map[A, B](ma: F[A])(f: A => B): F[B] = flatMap(ma) { a => unit(f(a)) }
   def map2[A, B, C](fa: F[A], fb: F[B])(f: (A, B) => C): F[C] = flatMap(fa) { a => map(fb) { b => f(a, b) } }
+
+  // Ex 11.3
+  // The sequence and traverse combinators should be pretty familiar to
+  // you by now, and your implementations of them from various prior
+  // chapters are probably all very similar. Implement them once and
+  // for all on Monad[F].
+  def sequence[A](lma: List[F[A]]): F[List[A]] = {
+    val z: F[List[A]] = unit(List.empty[A])
+    lma.foldRight(z) { case (a, z) => map2(z, a) { (intermediate, a) => a :: intermediate } }
+  }
+
+  def traverse[A, B](la: List[A])(f: A => F[B]): F[List[B]] = sequence(la.map { f })
 }
 
 import fpis.testing._
