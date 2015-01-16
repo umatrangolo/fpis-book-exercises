@@ -87,6 +87,11 @@ object Monoids {
       val (left, right) = xs.splitAt(median)
       m.op(foldMapV(left, m)(f), foldMapV(right, m)(f))
     }
-
   }
+
+  // Ex 10.9
+  // Use foldMap to detect whether a given IndexedSeq[Int] is
+  // ordered. You’ll need to come up with a creative Monoid.
+  def isOrdered[A <: Ordered[A]](xs: IndexedSeq[A]): Boolean = ??? // TODO
+
 }
