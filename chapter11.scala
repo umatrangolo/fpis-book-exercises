@@ -37,6 +37,9 @@ trait Monad[F[_]] extends Functor[F] {
   // Ex 11.4
   // Implement replicateM.
   def replicateM[A](n: Int, ma: F[A]): F[List[A]] = traverse((0 to n).toList) { i => ma }
+
+  def product[A, B](ma: F[A], mb: F[B]): F[(A, B)] = map2(ma, mb)((_, _))
+
 }
 
 import fpis.testing._
